@@ -142,7 +142,7 @@ public class MainActivity extends AbsSlidingMusicPanelActivity {
 
     @Override
     protected void requestPermissions() {
-        if (!blockRequestPermissions) super.requestPermissions();
+        if (!blockRequestPermissions) super.requestPermissions(); // from AbsbaseActivity class
     }
 
     @Override
@@ -274,7 +274,7 @@ public class MainActivity extends AbsSlidingMusicPanelActivity {
         boolean handled = false;
 
         if (intent.getAction() != null && intent.getAction().equals(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH)) {
-            final ArrayList<Song> songs = SearchQueryHelper.getSongs(this, intent.getExtras());
+            final ArrayList<Song> songs = SearchQueryHelper.getSongs(this, intent.getExtras()); // play from search
             if (MusicPlayerRemote.getShuffleMode() == MusicService.SHUFFLE_MODE_SHUFFLE) {
                 MusicPlayerRemote.openAndShuffleQueue(songs, true);
             } else {

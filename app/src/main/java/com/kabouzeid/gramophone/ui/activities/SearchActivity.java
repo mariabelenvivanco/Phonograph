@@ -44,8 +44,9 @@ public class SearchActivity extends AbsMusicServiceActivity implements SearchVie
     Toolbar toolbar;
     @BindView(android.R.id.empty)
     TextView empty;
-
+    // TODO : add a speech button to activate voice search
     SearchView searchView;
+    // TODO : Add voice transcription Intent from SearchView class
 
     private SearchAdapter adapter;
     private String query;

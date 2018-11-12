@@ -47,6 +47,8 @@ public abstract class AbsMusicServiceActivity extends AbsBaseActivity implements
         });
 
         setPermissionDeniedMessage(getString(R.string.permission_external_storage_denied));
+        // TODO : Set Permission Denied Message for microphone usage
+        //
     }
 
     @Override
@@ -206,6 +208,7 @@ public abstract class AbsMusicServiceActivity extends AbsBaseActivity implements
         super.onHasPermissionsChanged(hasPermissions);
         Intent intent = new Intent(MusicService.MEDIA_STORE_CHANGED);
         intent.putExtra("from_permissions_changed", true); // just in case we need to know this at some point
+        // TODO: Intent for Microphone permission change
         sendBroadcast(intent);
     }
 
@@ -213,5 +216,11 @@ public abstract class AbsMusicServiceActivity extends AbsBaseActivity implements
     @Override
     protected String[] getPermissionsToRequest() {
         return new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+       /*  TODO: ADD PERMISSION
+        *  Add Manifest permission ( in Manifest class)for microphone:
+        *  Manifest.permission.group.MICROPHONE
+        *  Manifest.permission.CAPTURE_AUDIO_OUTPUT
+        *  Manifest.permission.RECORD_AUDIO
+        */
     }
 }
