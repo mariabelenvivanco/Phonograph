@@ -1,6 +1,8 @@
 package com.kabouzeid.gramophone.ui.activities;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -10,10 +12,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.speech.*;
+import android.widget.Button;
+
+
+
 
 import com.kabouzeid.appthemehelper.ThemeStore;
 import com.kabouzeid.gramophone.R;
@@ -33,6 +41,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static java.sql.DriverManager.println;
+
 public class SearchActivity extends AbsMusicServiceActivity implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<List<Object>> {
 
     public static final String QUERY = "query";
@@ -44,12 +54,14 @@ public class SearchActivity extends AbsMusicServiceActivity implements SearchVie
     Toolbar toolbar;
     @BindView(android.R.id.empty)
     TextView empty;
-    // TODO : add a speech button to activate voice search
     SearchView searchView;
-    // TODO : Add voice transcription Intent from SearchView class
+    Button speechActivation;
+
+
 
     private SearchAdapter adapter;
     private String query;
+    private final int REQUEST_SPEECH_RECOGNIZER = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +74,7 @@ public class SearchActivity extends AbsMusicServiceActivity implements SearchVie
         setNavigationbarColorAuto();
         setTaskDescriptionColorAuto();
 
+        speechActivation = findViewById(R.id.speakButton);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SearchAdapter(this, Collections.emptyList());
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -78,6 +91,8 @@ public class SearchActivity extends AbsMusicServiceActivity implements SearchVie
             return false;
         });
 
+
+
         setUpToolBar();
 
         if (savedInstanceState != null) {
@@ -85,8 +100,33 @@ public class SearchActivity extends AbsMusicServiceActivity implements SearchVie
         }
 
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+
+
     }
 
+    public void speakButtonClicked(View v)
+    {
+        startSpeechRecognizer();
+    }
+
+    private void startSpeechRecognizer() { // uses built in Google speech api
+        Intent intent = new Intent (RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(intent, REQUEST_SPEECH_RECOGNIZER);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SPEECH_RECOGNIZER) {
+            if (resultCode == RESULT_OK) {
+                List<String> voiceInput = data.getStringArrayListExtra (RecognizerIntent.EXTRA_RESULTS); //most accurate speech recognizer result
+                this.query = voiceInput.get(0);
+                search(this.query); // search the voice input
+            }
+        }
+    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

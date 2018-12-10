@@ -18,6 +18,7 @@ import android.view.View;
 import com.kabouzeid.appthemehelper.ThemeStore;
 import com.kabouzeid.gramophone.R;
 
+import java.util.*;
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
@@ -26,7 +27,11 @@ public abstract class AbsBaseActivity extends AbsThemeActivity {
 
     private boolean hadPermissions;
     private String[] permissions;
+    private String [] permissionDeniedMessages; // for multiple permissions
+    private Map<String,Boolean> permissionBoolMap =  new HashMap<>(); //map for the boolean values of the permissions in permissions[] -> value changes if permissions change
     private String permissionDeniedMessage;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,7 @@ public abstract class AbsBaseActivity extends AbsThemeActivity {
     protected void onResume() {
         super.onResume();
         final boolean hasPermissions = hasPermissions();
-        if (hasPermissions != hadPermissions) {
+        if (hasPermissions != hadPermissions) { // permission changed
             hadPermissions = hasPermissions;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 onHasPermissionsChanged(hasPermissions);
@@ -77,7 +82,7 @@ public abstract class AbsBaseActivity extends AbsThemeActivity {
     }
 
     @Nullable
-    protected String[] getPermissionsToRequest() {
+    protected String[] getPermissionsToRequest() { // list of permissions to ask for
         return null;
     }
 
@@ -100,11 +105,15 @@ public abstract class AbsBaseActivity extends AbsThemeActivity {
     }
 
     protected boolean hasPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissions != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissions != null) { // if permissions exist, which they do
             for (String permission : permissions) {
                 if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                    permissionBoolMap.put(permission, false);
                     return false;
+                } else {
+                    permissionBoolMap.put(permission,true);
                 }
+
             }
         }
         return true;
@@ -115,14 +124,15 @@ public abstract class AbsBaseActivity extends AbsThemeActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST) {
             for (int grantResult : grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(AbsBaseActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) { //  if permission denied
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(AbsBaseActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) { // TODO: Make this general for other permissions
                         //User has deny from permission dialog
                         Snackbar.make(getSnackBarContainer(), getPermissionDeniedMessage(),
                                 Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.action_grant, view -> requestPermissions())
                                 .setActionTextColor(ThemeStore.accentColor(this))
                                 .show();
+
                     } else {
                         // User has deny permission and checked never show permission dialog so you can redirect to Application settings page
                         Snackbar.make(getSnackBarContainer(), getPermissionDeniedMessage(),
@@ -138,7 +148,7 @@ public abstract class AbsBaseActivity extends AbsThemeActivity {
                                 .show();
                     }
                     return;
-                }
+                } // if permission denied
             }
             hadPermissions = true;
             onHasPermissionsChanged(true);

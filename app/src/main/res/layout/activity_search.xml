@@ -4,11 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/status_bar" />
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/Toolbar" />
+
+    <include layout="@layout/status_bar" />
+
+    <Button android:id="@+id/speakButton"
+        android:layout_width="fill_parent"
+        android:onClick="speakButtonClicked"
+        android:layout_height="wrap_content"
+        android:text="Voice Activation!" />
+    <!--<Button-->
+        <!--android:id="@+id/button"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Button" />-->
 
     <FrameLayout
         android:layout_width="match_parent"

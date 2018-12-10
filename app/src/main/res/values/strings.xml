@@ -199,6 +199,9 @@
     <string name="licenses">Licenses</string>
     <string name="permissions_denied">Permissions denied.</string>
     <string name="permission_external_storage_denied">Permission to access external storage denied.</string>
+    <string name="voiceRecognition"> voiceRecognition.</string>
+    <string name="tvstt"> tvstt.</string>
+
     <string name="support_development">Support development</string>
     <string name="buy_pro">Buy Phonograph Pro</string>
     <string name="thank_you">Thank you!</string>
