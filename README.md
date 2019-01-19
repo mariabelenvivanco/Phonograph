@@ -10,5 +10,8 @@
       src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" />
 </a>
 
+# Voice Search
+
+I used Google Speech API to create a voice search option on the music player. 
 
 
